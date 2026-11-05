@@ -236,9 +236,9 @@ export function initHero(canvas) {
 
   function setTheme(theme) {
     if (theme === "light") {
-      uniforms.uColorA.value.set("#5b8a16"); // lime, darkened for white bg
-      uniforms.uColorB.value.set("#3a4ea0"); // indigo
-      uniforms.uColorC.value.set("#14141a"); // near-black highlights
+      uniforms.uColorA.value.set("#cdee3a"); // same lime as .btn--primary
+      uniforms.uColorB.value.set("#5a7dff");
+      uniforms.uColorC.value.set("#cdee3a");
       material.blending = THREE.NormalBlending;
     } else {
       uniforms.uColorA.value.set("#d6ff3e");
