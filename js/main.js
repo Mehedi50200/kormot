@@ -45,7 +45,7 @@ function initCursor() {
     requestAnimationFrame(render);
   })();
 
-  const hoverTargets = "a, button, [data-magnetic], [data-tilt], .product, .service, .step, .quote";
+  const hoverTargets = "a, button, [data-magnetic], [data-tilt], .product, .service, .step, .quote, .case__link";
   document.addEventListener("pointerover", (e) => {
     if (e.target.closest(hoverTargets)) cursor.classList.add("is-hover");
   });
@@ -250,13 +250,7 @@ function initScrollAnimations() {
     });
   }
 
-  // counters in work section
-  $$(".case__num, .case__num[data-stat]").forEach((el) => {
-    ScrollTrigger.create({
-      trigger: el, start: "top 90%", once: true,
-      onEnter: () => animateCount(el),
-    });
-  });
+  initWorkReel();
 
   // horizontal process scroll (desktop only): title stays pinned, cards translate
   const pin = $("#processPin");
@@ -397,6 +391,137 @@ function initThemeAndLang() {
 }
 
 /* =========================================================
+   selected work — auto slides inside the phone
+   ========================================================= */
+const workSlides = { setActive() {} };
+
+function initWorkSlides() {
+  const glasses = $$("[data-work-slides]");
+  if (!glasses.length) return;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const interval = 3800;
+  const controllers = [];
+
+  glasses.forEach((glass) => {
+    const lights = $$(".case__slide--light", glass);
+    const darks = $$(".case__slide--dark", glass);
+    const n = Math.min(lights.length, darks.length);
+    if (n < 2) {
+      controllers.push({ play() {}, pause() {} });
+      return;
+    }
+    let i = 0;
+    let timer = 0;
+
+    const show = (idx) => {
+      i = (idx + n) % n;
+      lights.forEach((el, k) => el.classList.toggle("is-on", k === i));
+      darks.forEach((el, k) => el.classList.toggle("is-on", k === i));
+    };
+
+    const pause = () => {
+      window.clearTimeout(timer);
+      window.clearInterval(timer);
+      timer = 0;
+    };
+    const play = () => {
+      if (reduce || timer) return;
+      timer = window.setTimeout(() => {
+        show(i + 1);
+        timer = window.setInterval(() => show(i + 1), interval);
+      }, interval);
+    };
+
+    controllers.push({ play, pause });
+  });
+
+  let visible = false;
+  workSlides.setActive = (idx) => {
+    controllers.forEach((c, i) => (visible && i === idx ? c.play() : c.pause()));
+  };
+  const host = document.querySelector(".work__phone") || glasses[0];
+  if ("IntersectionObserver" in window && host) {
+    const io = new IntersectionObserver((entries) => {
+      visible = entries.some((e) => e.isIntersecting);
+      const on = glasses.findIndex((g) => g.classList.contains("is-on"));
+      workSlides.setActive(on < 0 ? 0 : on);
+    }, { threshold: 0.2 });
+    io.observe(host);
+  } else {
+    visible = true;
+    workSlides.setActive(0);
+  }
+}
+
+function initWorkReel() {
+  const pin = $("#workPin");
+  const glasses = $$("[data-work-slides]");
+  const panels = $$("[data-work-panel]");
+  const sectors = $$(".work__sectors .case__sector");
+  const ticks = $$("#workTicks li");
+  const tickBtns = $$("[data-work-tick]");
+  const bar = $("#workBar");
+  const phone = $(".work__phone");
+  const n = panels.length;
+  if (!pin || n < 2) return;
+
+  const products = glasses.map((g) => g.dataset.product);
+  let active = -1;
+  const counted = new Set();
+
+  const setActive = (idx) => {
+    idx = Math.max(0, Math.min(n - 1, idx));
+    if (idx === active) return;
+    active = idx;
+    glasses.forEach((el, i) => el.classList.toggle("is-on", i === active));
+    panels.forEach((el, i) => el.classList.toggle("is-on", i === active));
+    sectors.forEach((el, i) => el.classList.toggle("is-on", i === active));
+    ticks.forEach((el, i) => el.classList.toggle("is-on", i === active));
+    if (phone && products[active]) phone.dataset.product = products[active];
+    workSlides.setActive(active);
+    if (!counted.has(active)) {
+      counted.add(active);
+      $$(".case__num", panels[active]).forEach(animateCount);
+    }
+  };
+
+  setActive(0);
+
+  const desktop = window.matchMedia("(min-width: 861px)").matches;
+  const ScrollTrigger = window.ScrollTrigger;
+  if (!desktop || !ScrollTrigger || reduced) {
+    tickBtns.forEach((btn) => {
+      btn.addEventListener("click", () => setActive(+btn.dataset.workTick));
+    });
+    if (bar) bar.style.width = "100%";
+    return;
+  }
+
+  const st = ScrollTrigger.create({
+    trigger: pin,
+    start: "top top",
+    end: () => "+=" + Math.round(window.innerHeight * n * 0.9),
+    pin: true,
+    pinSpacing: true,
+    scrub: 0.55,
+    anticipatePin: 1,
+    invalidateOnRefresh: true,
+    onUpdate: (self) => {
+      if (bar) bar.style.width = (self.progress * 100) + "%";
+      setActive(Math.min(n - 1, Math.floor(self.progress * 0.999 * n)));
+    },
+  });
+
+  tickBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const idx = +btn.dataset.workTick;
+      const target = st.start + ((idx + 0.35) / n) * (st.end - st.start);
+      window.scrollTo({ top: target, behavior: "smooth" });
+    });
+  });
+}
+
+/* =========================================================
    boot
    ========================================================= */
 async function boot() {
@@ -415,6 +540,7 @@ async function boot() {
   initMobileMenu();
   initContact();
   initAnchors();
+  initWorkSlides();
 
   await waitForGSAP();
 
