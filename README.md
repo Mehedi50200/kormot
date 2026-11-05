@@ -27,7 +27,48 @@ python3 -m http.server 5173
 # open http://localhost:5173
 ```
 
-Or use any static server (`npx serve`, etc.).
+Or use any static server (`npx serve`, etc.). Preview the Firebase Hosting target with:
+
+```bash
+firebase emulators:start --only hosting
+```
+
+## Deploy
+
+Firebase Hosting target `web` on project `kormot-web`.
+
+| URL | Role |
+| --- | --- |
+| https://kormot.com | Canonical site |
+| https://www.kormot.com | Redirects to `kormot.com` |
+| https://kormot-web.web.app | Firebase default URL |
+
+```bash
+firebase deploy --only hosting:web
+```
+
+### Namecheap (`kormot.com`)
+
+Both hostnames are attached on the `kormot-web` Hosting site. `www.kormot.com` 301s to `https://kormot.com`. Add these records and leave the existing `ayahora` / `kpp` CNAMEs alone:
+
+| Host | Type | Value |
+| --- | --- | --- |
+| `@` | A | `199.36.158.100` |
+| `@` | TXT | `hosting-site=kormot-web` |
+| `_acme-challenge` | TXT | `61y6WC_NYB2Ux-PuYFqvaKwXmx6X_Z2pP2G2e4_zTVo` |
+| `www` | CNAME | `kormot-web.web.app` |
+| `_acme-challenge.www` | TXT | `FmxPbp6GTcVObb8s9HFATyPf-kRp1tTrRxTMwheiBYw` |
+
+## Branches
+
+Same as ayahora and kpp: feature branches merge into `dev`. `dev` merges into `prod`. There is no `stage` branch.
+
+| Branch | Deploys the site? |
+| --- | --- |
+| `dev` | No. Pull requests into `dev` or `prod` only check that the site files exist. |
+| `prod` | Yes. GitHub Actions deploys `hosting:web`. |
+
+The repo secret `FIREBASE_SERVICE_ACCOUNT` must be a Google service-account JSON key that can deploy Hosting on `kormot-web`. The workflow is [`.github/workflows/web-hosting.yml`](.github/workflows/web-hosting.yml).
 
 ## Structure
 
@@ -38,6 +79,8 @@ kormot/
 ├── js/
 │   ├── main.js       # preloader, cursor, GSAP animations, interactions
 │   └── three-hero.js # Three.js particle hero (custom GLSL shaders)
+├── firebase.json
+├── .firebaserc
 └── README.md
 ```
 

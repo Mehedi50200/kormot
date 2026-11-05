@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "kormot-web"
+  },
+  "targets": {
+    "kormot-web": {
+      "hosting": {
+        "web": [
+          "kormot-web"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
