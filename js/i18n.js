@@ -115,6 +115,8 @@ export const I18N = {
     "cta.sub": "Book a demo of our products or a free consultation about your custom build. We reply within one business day.",
     "cta.demo": "Book a demo",
     "cta.consult": "Free consultation",
+    "cta.waDemo": "Hi kormot — I'd like to book a product demo.",
+    "cta.waConsult": "Hi kormot — I'd like a free consultation about a custom project.",
 
     "footer.tagline": "Software, forged through relentless craft. SaaS products & custom software for ambitious teams.",
     "footer.company": "Company",
@@ -236,6 +238,8 @@ export const I18N = {
     "cta.sub": "আমাদের প্রোডাক্টের ডেমো কিংবা আপনার কাস্টম প্রজেক্ট নিয়ে বিনামূল্যে পরামর্শ বুক করুন। আমরা এক কর্মদিবসের মধ্যে উত্তর দিই।",
     "cta.demo": "ডেমো বুক করুন",
     "cta.consult": "বিনামূল্যে পরামর্শ",
+    "cta.waDemo": "হ্যালো kormot — আমি একটি প্রোডাক্ট ডেমো বুক করতে চাই।",
+    "cta.waConsult": "হ্যালো kormot — আমি একটি কাস্টম প্রজেক্ট নিয়ে বিনামূল্যে পরামর্শ চাই।",
 
     "footer.tagline": "নিরলস পরিশ্রমে গড়া সফটওয়্যার। উচ্চাকাঙ্ক্ষী টিমের জন্য স্যাস প্রোডাক্ট ও কাস্টম সফটওয়্যার।",
     "footer.company": "কোম্পানি",
@@ -298,5 +302,10 @@ export function applyI18n(lang) {
   document.querySelectorAll("[data-i18n-aria]").forEach((el) => {
     const key = el.getAttribute("data-i18n-aria");
     if (key && key in dict) el.setAttribute("aria-label", dict[key]);
+  });
+
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+    const key = el.getAttribute("data-i18n-placeholder");
+    if (key && key in dict) el.setAttribute("placeholder", dict[key]);
   });
 }

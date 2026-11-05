@@ -319,6 +319,20 @@ function initMobileMenu() {
 }
 
 /* =========================================================
+   CTA contact actions
+   ========================================================= */
+function initContact() {
+  const demo = $("#ctaDemo");
+  const consult = $("#ctaConsult");
+  if (demo) {
+    demo.href = `https://wa.me/601112814900?text=${encodeURIComponent(t("cta.waDemo"))}`;
+  }
+  if (consult) {
+    consult.href = `https://wa.me/601112814900?text=${encodeURIComponent(t("cta.waConsult"))}`;
+  }
+}
+
+/* =========================================================
    smooth anchor scrolling
    ========================================================= */
 function initAnchors() {
@@ -399,6 +413,7 @@ async function boot() {
 
   initCursor();
   initMobileMenu();
+  initContact();
   initAnchors();
 
   await waitForGSAP();

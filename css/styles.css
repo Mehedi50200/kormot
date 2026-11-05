@@ -255,7 +255,9 @@ ul { list-style: none; }
 .mobile-menu__tools { display: flex; gap: 0.6rem; margin-top: 2.6rem; }
 .mobile-menu__tools .tool-btn { height: 46px; min-width: 46px; }
 .mobile-menu__tools .tool-btn--lang { padding: 0 1.1rem; font-size: 0.85rem; }
-.mobile-menu__foot { margin-top: 1.6rem; font-family: var(--font-mono); color: var(--muted); }
+.mobile-menu__foot { margin-top: 1.6rem; font-family: var(--font-mono); color: var(--muted); display: flex; flex-direction: column; gap: 0.55rem; }
+.mobile-menu__foot a { width: fit-content; transition: color 0.3s; }
+.mobile-menu__foot a:hover { color: var(--accent-strong); }
 
 /* =========================================================
    HERO
@@ -512,7 +514,7 @@ ul { list-style: none; }
 /* =========================================================
    CTA
    ========================================================= */
-.cta { position: relative; padding: clamp(6rem, 18vh, 13rem) var(--gutter); text-align: center; overflow: hidden; border-top: 1px solid var(--line); }
+.cta { position: relative; padding: clamp(6rem, 18vh, 13rem) var(--gutter); text-align: center; overflow: hidden; border-top: 1px solid var(--line); scroll-margin-top: 96px; }
 .cta::before { content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 120vw; height: 120vw; max-width: 1100px; max-height: 1100px; background: radial-gradient(circle, var(--accent-glow), transparent 60%); opacity: 0.25; pointer-events: none; }
 .cta__inner { position: relative; z-index: 2; max-width: 900px; margin: 0 auto; }
 .cta__eyebrow { font-family: var(--font-mono); font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-strong); }
